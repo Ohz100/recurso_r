@@ -1,0 +1,145 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+# 29000 L
+# 5900 kg
+# 29.7 m^3
+
+# 41500 L
+# 8049 kg
+# 42.4 m^3
+
+m <- 8049
+g <- 9.80665
+
+V <- 42.4
+rho <- 1027
+
+n <- 4
+A_b <- .606*25.4^2
+F_n <- 620
+omega <- 2
+
+d_b_in <- 1
+d_b <- d_b_in*25.4
+
+W <- m*g
+Q <- V*rho*g
+P <- Q - W
+
+R_a <- P/n
+R_n <- F_n*A_b
+u <- R_n/omega
+```
+
+<!--
+title: "Cálculo de Flotación"
+output: html_document
+date: "2024-07-09"
+-->
+
+<center>
+<h2>Svifflug, S. de R. L. de C. V.</h2><br>
+CALZADA DE MARISOLES LOTE 1, EX-HACIENDA DE JALPA, HUEHUETOCA ESTADO DE MÉXICO C.P. 54683 MÉXICO
+</center>
+
+<br>
+
+# Cálculo de Flotación
+
+## Datos del proyecto
+
+<br>
+
+ |
+---|---
+Cliente           | Tropigas Natural
+Capacidad         | 41500 L
+OT                | 51190
+Diámetro Exterior | 2.235 m [88 in]
+Largo             | 11.557 m [455 in]
+
+## Notación 
+
+<br>
+
+ | |
+---|----|---
+$A_b$   | $\mathrm{mm^2}$   | Área nominal
+$F_n$   | $\mathrm{MPa}$    | Esfuerzo nominal
+$g$     | $\mathrm{m/s^2}$  | Gravedad
+$m$     | $\mathrm{kg}$     | Masa del tanque vácio
+$n$     | -                 | Número de anclas
+$P$     | $\mathrm{N}$      | Reacción en la base
+$Q$     | $\mathrm{N}$      | Fuerza de flotación
+$R_a$   | $\mathrm{N}$      | Resistencia requerida
+$R_n$   | $\mathrm{N}$      | Resistencia nominal
+$V$     | $\mathrm{m^3}$    | Volumen
+$W$     | $\mathrm{N}$      | Peso del tanque vácio
+$\rho$  | $\mathrm{kg/m^3}$ | Densidad del agua
+$\Omega$| -                 | Factor de seguridad
+
+## Reacción en la base
+
+\begin{align*}
+g &= `r g` \;\mathrm{m/s^2}\\
+m &= `r m` \;\mathrm{kg}\\
+V &= `r V` \;\mathrm{m^3}\\
+\rho &= `r rho` \;\mathrm{kg/m^3}
+\end{align*}
+
+<br>
+
+\begin{align*}
+W &= m \cdot g\\
+W &= `r m` \;\mathrm{kg} \cdot `r g` \;\mathrm{m/s^2}\\
+W &= `r W/1000` \;\mathrm{kN}
+\end{align*}
+
+<br>
+
+\begin{align*}
+Q &= V \cdot \rho \cdot g\\
+Q &= `r V` \;\mathrm{m^3} \cdot `r rho` \;\mathrm{kg/m^3}\cdot `r g` \;\mathrm{m/s^2}\\
+Q &= `r Q/1000` \;\mathrm{kN}
+\end{align*}
+
+<br>
+
+\begin{align*}
+P &= Q - W\\
+P &= `r Q/1000` \;\mathrm{kN} - `r W/1000` \;\mathrm{kN}\\
+P &= `r P/1000` \;\mathrm{kN}
+\end{align*}
+
+## Resistencia del anclaje
+
+Se consideran anclas de acero A325 de diámetro de `r d_b` mm [`r d_b_in` in].
+
+\begin{align*}
+F_n &= `r F_n` \;\mathrm{MPa}\\
+A_b &= `r A_b` \;\mathrm{mm^2}\\
+\Omega &= `r omega`
+\end{align*}
+
+\begin{align*}
+R_a &= \frac{P}{n}\\[10pt]
+R_a &= \frac{`r P/1000` \;\mathrm{kN}}{`r n`}\\[10pt]
+R_a &= `r R_a/1000` \;\mathrm{kN}\\[10pt]
+
+R_n &= F_n \cdot A_b\\[10pt]
+R_n &= `r F_n` \;\mathrm{MPa} \cdot `r A_b` \;\mathrm{mm^2}\\[10pt]
+R_n &= `r R_n/1000` \;\mathrm{kN}
+\end{align*}
+
+<br>
+
+$$ `r R_a/1000` \;\mathrm{kN} \le \frac{R_n}{\Omega} = \frac{`r R_n/1000` \;\mathrm{kN}}{`r omega`} = `r  u/1000`\;\mathrm{kN} \: \therefore \: \text{PASA}$$
+
+## Conclución
+
+Los ensambles de anclajes propuestos son suficientes para contrarrestar la fuerza de flotación en caso de que el lugar se inunde de agua

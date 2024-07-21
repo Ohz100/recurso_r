@@ -4,6 +4,7 @@ df
 apply(df, MARGIN = 1, sum)
 apply(df, MARGIN = 2, sum)
 
+# vapply
 
 
 # regex
@@ -34,4 +35,3 @@ grepl('^[0-9]', b)
 # date
 Sys.Date()
 Sys.time()
-
