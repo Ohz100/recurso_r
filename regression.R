@@ -52,3 +52,4 @@ ggplot(df, aes(x, y)) +
 ## library() tidy() augment() glance() I()
 
 # dell lorem ipsum
+# (>o.o)>
