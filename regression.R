@@ -50,3 +50,5 @@ ggplot(df, aes(x, y)) +
 
 ## coefficients() fitted() residuals() summary()
 ## library() tidy() augment() glance() I()
+
+# dell lorem ipsum
