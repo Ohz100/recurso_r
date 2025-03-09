@@ -122,3 +122,95 @@ ggplot(df_4, aes(sqrt(x), sqrt(y))) +
   geom_point() + 
   geom_smooth(method = 'lm', se = FALSE) + 
   geom_point(data = df_4_predict, color = 'blue', size = 4)
+
+## Coefficient of determination (coeficiente de coorelación)
+
+summary(model)
+summary(model_df_2)
+summary(model_df_3)
+summary(model_df_4)
+
+library(broom)
+model %>% glance()
+model_df_2 %>% glance()
+model_df_3 %>% glance()
+model_df_4 %>% glance()
+
+summary(model)
+cor(df[['x']], df[['y']])^2
+
+## RSE
+
+model %>% glance %>% pull(sigma)
+
+df %>%
+  mutate(residuals_sqrt = residuals(model)^2) %>%
+  summarize(
+    sum_residuals_sqrt = sum(residuals_sqrt),
+    deg_freedom = n() - 2,
+    rse = sqrt(sum_residuals_sqrt/deg_freedom)
+  )  
+
+## RMSE
+
+df %>%
+  mutate(residuals_sqrt = residuals(model)^2) %>%
+  summarize(
+    sum_residuals_sqrt = sum(residuals_sqrt),
+    n_obs = n(),
+    rmse = sqrt(sum_residuals_sqrt/n_obs)
+  )
+
+## 1 residual vs fitted values
+## 2 Q-Q plot
+## 3 scale-location
+
+library(ggfortify)
+autoplot(model, which = 1)
+autoplot(model, which = 2)
+autoplot(model, which = 1:3)
+
+autoplot(model_df_3, which = 1:3, nrow = 3, ncol = 1)
+
+## Outliers
+
+n <- 50
+x_5 <- runif(n, 1, 9)
+y_5 <- 1 + 0.5*x_5 + rnorm(n, sd = .25)
+df_5 <- data.frame(x = x_5, y = y_5)
+ggplot(df_5, aes(x, y)) + geom_point() + geom_smooth(method = 'lm', se = FALSE)
+df_5_out <- data.frame(x = c(1, 9, 12), y = c(4, 4, 6))
+df_5_mod <- rbind(df_5, df_5_out)
+ggplot(df_5_mod, aes(x, y)) + geom_point() + geom_smooth(method = 'lm', se = FALSE)
+
+### Leverage 
+
+model_df_5 <- lm(y ~ x, df_5_mod)
+
+hatvalues(model_df_5)
+
+augment(model_df_5)
+augment(model_df_5) %>% pull(.hat)
+model_df_5 %>%
+  augment() %>%
+  select(x, y, leverage = .hat) %>%
+  arrange(desc(leverage)) %>%
+  head()
+
+### Influence (Cook's distance)
+
+cooks.distance(model_df_5)
+
+augment(model_df_5) %>% pull(.cooksd)
+model_df_5 %>%
+  augment() %>%
+  select(x, y, cooksd = .cooksd) %>%
+  arrange(desc(cooksd)) %>%
+  head()
+
+ggplot(df_5_mod, aes(x, y)) +
+  geom_point() +
+  geom_smooth(method = 'lm', se = FALSE) +
+  geom_smooth(method = 'lm', se = FALSE, data = df_5, color = 'red')
+
+autoplot(model_df_5, which = 4:6, nrow = 2, ncol = 2)
