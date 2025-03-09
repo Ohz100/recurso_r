@@ -46,11 +46,79 @@ ggplot(df, aes(x, y)) +
   geom_smooth(method = "lm", se = FALSE) + 
   geom_point(data = df_fited, color = 'yellow')
 
-#### hasta aqui me quede
+## Regression to de mean
 
-## coefficients() fitted() residuals() summary()
-## library() tidy() augment() glance() I()
+ggplot(df, aes(x, y)) +
+  geom_point() +
+  geom_abline(color = 'green', size = 1) +
+  coord_fixed() +
+  geom_smooth(method = 'lm', se = FALSE)
 
-# dell lorem ipsum
-# (>o.o)>
-# a, b, c, d, e
+predict(model, data.frame(x = 1)) # predicted y > x
+
+predict(model, data.frame(x = 3)) # predicted y < x
+
+## Transforming variables y ~ x^2
+n <- 200
+x_3 <- runif(n, 2, 9)
+y_3 <- 4*(x_3 + 2)^2 + 2 + rnorm(n, sd = 5)
+df_3 <- data.frame(x = x_3, y = y_3)
+
+ggplot(df_3, aes(x, y)) +
+  geom_point()+
+  geom_smooth(method = 'lm', se = FALSE)
+
+ggplot(df_3, aes(x^2, y)) +
+  geom_point() +
+  geom_smooth(method = 'lm', se = FALSE)
+
+model_df_3 <- lm(y ~ I(x^2), df_3)
+model_df_3
+
+df_3_x <- data.frame(x = 2:9)
+df_3_predict <- df_3_x %>%
+  mutate(y = predict(model_df_3, df_3_x))
+df_3_predict
+
+ggplot(df_3, aes(x, y)) + 
+  geom_point() + 
+  geom_smooth(method = 'lm', se = FALSE) + 
+  geom_point(data = df_3_predict, color = 'blue', size = 4)
+
+ggplot(df_3, aes(x^2, y)) + 
+  geom_point() + 
+  geom_smooth(method = 'lm', se = FALSE) + 
+  geom_point(data = df_3_predict, color = 'blue', size = 4)
+
+## Transforming variables y^0.5 ~ x^0.5
+n <- 400
+t <- runif(n, 0, 10)
+x_4 <- t^2
+y_4 <- abs(x_4 + rnorm(n, sd = 3))
+df_4 <- data.frame(x = x_4, y = y_4)
+
+ggplot(df_4, aes(x, y)) +
+  geom_point()+
+  geom_smooth(method = 'lm', se = FALSE)
+
+ggplot(df_4, aes(sqrt(x), sqrt(y))) +
+  geom_point()+
+  geom_smooth(method = 'lm', se = FALSE)
+
+model_df_4 <- lm(sqrt(y) ~ sqrt(x), df_4)
+model_df_4
+
+df_4_x <- data.frame(x = 1:9)
+df_4_predict <- df_4_x %>%
+  mutate(sqr_y = predict(model_df_4, df_4_x), y = sqr_y^2)
+df_4_predict
+
+ggplot(df_4, aes(x, y)) + 
+  geom_point() + 
+  geom_smooth(method = 'lm', se = FALSE) + 
+  geom_point(data = df_4_predict, color = 'blue', size = 4)
+
+ggplot(df_4, aes(sqrt(x), sqrt(y))) + 
+  geom_point() + 
+  geom_smooth(method = 'lm', se = FALSE) + 
+  geom_point(data = df_4_predict, color = 'blue', size = 4)
