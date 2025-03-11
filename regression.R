@@ -214,3 +214,68 @@ ggplot(df_5_mod, aes(x, y)) +
   geom_smooth(method = 'lm', se = FALSE, data = df_5, color = 'red')
 
 autoplot(model_df_5, which = 4:6, nrow = 2, ncol = 2)
+
+### logistic regression
+
+n <- 25
+df_6 <- data.frame(x = c(runif(n, 0, 3), runif(n, 2, 5)), y = c(rep(0, n), rep(1, n)))
+df_6
+
+ggplot(df_6, aes(x, y)) +
+  geom_point() +
+  geom_smooth(method = 'lm', se = FALSE) +
+  geom_smooth(method = 'glm', se = FALSE, method.args = list(family = binomial))
+
+model_df_6 <- glm(y ~ x, data = df_6, family = binomial)
+model_df_6
+
+#coef <- coefficients(lm(y ~ x, df_6))
+#ggplot(df_6, aes(x, y)) +
+#  geom_point() +
+#  geom_abline(intercept  = coef[1], slope = coef[2]) +
+#  geom_smooth(method = 'glm', se = FALSE, method.args = list(family = binomial))
+
+df_6_x <- data.frame(x = seq(1, 4, 0.2))
+df_6_predict <- df_6_x %>% 
+  mutate(
+    y = predict(model_df_6, df_6_x, type = 'response'),
+    y_most_likely = round(y),
+    y_odds_ratio = y/(1 - y),
+    y_log_odds_ratio = log(y_odds_ratio),
+    y_log_odds_ratio2 = predict(model_df_6, df_6_x)
+  )
+
+ggplot(df_6, aes(x, y)) +
+  geom_point() +
+  geom_point(data = df_6_predict, color = 'blue') + 
+  geom_point(aes(y = y_most_likely), data = df_6_predict, color = 'green')
+
+df_6_predict
+
+ggplot(df_6_predict, aes(x, y_odds_ratio)) +
+  geom_line() +
+  geom_hline(yintercept = 1, linetype = 'dotted')
+
+ggplot(df_6_predict, aes(x, y_odds_ratio)) +
+  geom_line() + 
+  geom_hline(yintercept = 1, linetype = 'dotted') +
+  scale_y_log10()
+
+## confusion matrix
+
+actual <- df_6[['y']]
+predicted <-round(fitted(model_df_6))
+outcome <- table(predicted, actual)
+outcome
+
+library(yardstick)
+confusion <- conf_mat(outcome)
+autoplot(confusion)
+summary(confusion, event_level = 'second')
+confusion %>%
+  summary() %>%
+  filter(.metric == 'accuracy' | .metric == 'sens' | .metric == 'spec')
+
+confusion %>%
+  summary() %>%
+  slice(c(1, 3, 4))
